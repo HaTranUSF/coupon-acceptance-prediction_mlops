@@ -1,0 +1,8 @@
+pandas
+numpy
+scikit-learn
+ucimlrepo
+mlflow
+joblib
+pytest
+httpx

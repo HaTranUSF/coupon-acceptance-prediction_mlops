@@ -1,0 +1,24 @@
+artifact_path: file:C:/Users/tranm/Downloads/Coupon_acceptance_rate/mlruns/1/models/m-af67b2b2d4304444a5aeb4d80d41a557/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.skops
+    predict_fn: predict
+    python_version: 3.14.5
+  sklearn:
+    code: null
+    pickled_model: model.skops
+    serialization_format: skops
+    sklearn_version: 1.9.1
+    skops_trusted_types:
+    - numpy.dtype
+mlflow_version: 3.16.0
+model_id: m-af67b2b2d4304444a5aeb4d80d41a557
+model_size_bytes: 22347553
+model_uuid: m-af67b2b2d4304444a5aeb4d80d41a557
+prompts: null
+run_id: 73885f165f15450fa8e8f3798b56e5d1
+utc_time_created: '2026-09-12 19:15:17.021413'
