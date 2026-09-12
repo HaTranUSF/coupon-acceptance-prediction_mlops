@@ -8,23 +8,29 @@ WORKDIR /app
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
-# Install system dependencies if required
+# Install system dependencies and supervisor for multi-process management
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy source code and trained model artifacts
+# Copy source code, model artifacts, api, and app directory
 COPY source/ ./source/
 COPY api/ ./api/
 COPY models/ ./models/
+COPY app/ ./app/
 COPY tests/ ./tests/
 
-# Expose FastAPI default port
-EXPOSE 8000
+# Copy supervisor configuration file to container
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Run the FastAPI server via Uvicorn
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Expose Render's required web port (10000 for Streamlit) 
+# and FastAPI's internal port (8000)
+EXPOSE 10000 8000
+
+# Run supervisor to manage both FastAPI and Streamlit processes
+CMD ["supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
