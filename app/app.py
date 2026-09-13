@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-st.set_page_config(page_title="Coupon Acceptance Predictor", page_icon="🚗", layout="wide")
+st.set_page_config(page_title="Coupon Acceptance Predictor", page_icon="🎟️", layout="wide")
 
 st.title("🎟️ Coupon Acceptance Predictor")
 st.write("Enter the trip and driver details below to check prediction results from the FastAPI backend.")
@@ -28,16 +28,12 @@ with st.form("prediction_form"):
     with col2:
         coupon = st.selectbox("Coupon Type", ["coffee house", "restaurant(<20)", "carry out & take away", "bar", "restaurant(20-50)"])
         
-        # Slider-style selector for Expiration
-        expiration_choice = st.select_slider(
-            "Coupon Expiration",
-            options=["2 Hours", "1 Day"]
-        )
-        expiration = "2h" if expiration_choice == "2 Hours" else "1d"
+        # Reverted Expiration back to a standard dropdown
+        expiration = st.selectbox("Expiration", ["1d", "2h"])
         
         gender = st.selectbox("Gender", ["female", "male"])
         
-        # Age slider mapped to model's expected categorical bins[cite: 4]
+        # Age slider mapped to model's expected categorical bins
         age_num = st.slider("Driver Age", 16, 80, 26)
         if age_num < 21:
             age = "21"
@@ -106,7 +102,7 @@ with st.form("prediction_form"):
     submitted = st.form_submit_button("Get Prediction from API")
 
 if submitted:
-    # Construct payload matching FastAPI backend requirements[cite: 4]
+    # Construct payload matching FastAPI backend requirements
     payload = {
         "destination": destination,
         "passenger": passenger,
