@@ -178,7 +178,7 @@ with st.form("prediction_form"):
         CoffeeHouse = st.selectbox("Visits coffee houses", list(FREQUENCY_LABELS.keys()), format_func=label_for(FREQUENCY_LABELS, FREQUENCY_LABELS))
         CarryAway = st.selectbox("Orders carry out", list(FREQUENCY_LABELS.keys()), format_func=label_for(FREQUENCY_LABELS, FREQUENCY_LABELS))
         RestaurantLessThan20 = st.selectbox("Eats at restaurants under $20", list(FREQUENCY_LABELS.keys()), format_func=label_for(FREQUENCY_LABELS, FREQUENCY_LABELS))
-        Restaurant20To50 = st.selectbox("Eats at restaurants $20 to $50", list(FREQUENCY_LABELS.keys()), format_func=label_for(FREQUENCY_LABELS, FREQUENCY_LABELS))
+        Restaurant20To50 = st.selectbox("Eats at restaurants \\$20 to \\$50", list(FREQUENCY_LABELS.keys()), format_func=label_for(FREQUENCY_LABELS, FREQUENCY_LABELS))
 
     with col5:
         distance_choice = st.selectbox(
