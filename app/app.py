@@ -3,7 +3,7 @@ import requests
 
 st.set_page_config(page_title="Coupon Acceptance Predictor", page_icon="🚗", layout="wide")
 
-st.title("🚗 Coupon Acceptance Predictor")
+st.title("🎟️ Coupon Acceptance Predictor")
 st.write("Enter the trip and driver details below to check prediction results from the FastAPI backend.")
 
 # FastAPI endpoint running locally in the same container via Supervisor
@@ -18,14 +18,26 @@ with st.form("prediction_form"):
         passenger = st.selectbox("Passenger", ["alone", "friend(s)", "kid(s)", "partner"])
         weather = st.selectbox("Weather", ["sunny", "rainy", "snowy"])
         temperature = st.slider("Temperature (°F)", 10, 100, 80)
-        time = st.selectbox("Time of Day", ["10am", "2pm", "6pm", "7am", "10pm"])
+        
+        # Chronological select slider for Time of Day
+        time = st.select_slider(
+            "Time of Day", 
+            options=["7am", "10am", "2pm", "6pm", "10pm"]
+        )
         
     with col2:
         coupon = st.selectbox("Coupon Type", ["coffee house", "restaurant(<20)", "carry out & take away", "bar", "restaurant(20-50)"])
-        expiration = st.selectbox("Expiration", ["1d", "2h"])
+        
+        # Slider-style selector for Expiration
+        expiration_choice = st.select_slider(
+            "Coupon Expiration",
+            options=["2 Hours", "1 Day"]
+        )
+        expiration = "2h" if expiration_choice == "2 Hours" else "1d"
+        
         gender = st.selectbox("Gender", ["female", "male"])
         
-        # Age slider converted to match your model's expected categorical bins[cite: 4]
+        # Age slider mapped to model's expected categorical bins[cite: 4]
         age_num = st.slider("Driver Age", 16, 80, 26)
         if age_num < 21:
             age = "21"
@@ -54,6 +66,7 @@ with st.form("prediction_form"):
 
     st.subheader("Habits & Proximity Flags")
     col4, col5 = st.columns(2)
+    
     with col4:
         Bar = st.selectbox("Visits Bar Frequency", ["never", "less1", "1~3", "4~8", "gt8"])
         CoffeeHouse = st.selectbox("Visits Coffee House Frequency", ["never", "less1", "1~3", "4~8", "gt8"])
@@ -62,11 +75,33 @@ with st.form("prediction_form"):
         Restaurant20To50 = st.selectbox("Restaurant 20-50 Frequency", ["never", "less1", "1~3", "4~8", "gt8"])
         
     with col5:
-        toCoupon_GEQ5min = st.selectbox("Distance GEQ 5min", [0, 1], index=1)
-        toCoupon_GEQ15min = st.selectbox("Distance GEQ 15min", [0, 1])
-        toCoupon_GEQ25min = st.selectbox("Distance GEQ 25min", [0, 1])
-        direction_same = st.selectbox("Direction Same", [0, 1])
-        direction_opp = st.selectbox("Direction Opposite", [0, 1], index=1)
+        # Smart Distance Selector (Automatically manages GEQ threshold flags)
+        distance_choice = st.selectbox(
+            "Estimated Travel Time to Coupon Location",
+            ["Under 5 minutes", "5 to 15 minutes", "15 to 25 minutes", "Over 25 minutes"],
+            index=1
+        )
+        
+        if distance_choice == "Under 5 minutes":
+            toCoupon_GEQ5min, toCoupon_GEQ15min, toCoupon_GEQ25min = 0, 0, 0
+        elif distance_choice == "5 to 15 minutes":
+            toCoupon_GEQ5min, toCoupon_GEQ15min, toCoupon_GEQ25min = 1, 0, 0
+        elif distance_choice == "15 to 25 minutes":
+            toCoupon_GEQ5min, toCoupon_GEQ15min, toCoupon_GEQ25min = 1, 1, 0
+        else:
+            toCoupon_GEQ5min, toCoupon_GEQ15min, toCoupon_GEQ25min = 1, 1, 1
+
+        # Smart Direction Selector (Ensures mutually exclusive toggle)
+        direction_choice = st.radio(
+            "Trip Direction Relative to Destination",
+            ["Same Direction", "Opposite Direction"],
+            index=1
+        )
+        
+        if direction_choice == "Same Direction":
+            direction_same, direction_opp = 1, 0
+        else:
+            direction_same, direction_opp = 0, 1
 
     submitted = st.form_submit_button("Get Prediction from API")
 
