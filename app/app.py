@@ -170,7 +170,7 @@ with st.form("prediction_form"):
             format_func=label_for(INCOME_LABELS, INCOME_LABELS),
         )
 
-    st.subheader("How Often Does the Driver Go Out?")
+    st.subheader("How Often Does The Person Go Out?")
     col4, col5 = st.columns(2)
 
     with col4:
